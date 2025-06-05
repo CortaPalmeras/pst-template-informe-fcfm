@@ -1,8 +1,14 @@
 
-#let titulo = "Template de Informe"
-#let codigo-curso = "CC1234"
-
 #let meta = (
+  title: "Template de Informe",
+  course: "CC1234",
+  institution: "Universidad de Chile",
+  faculty: "Facultad de Ciencias Físicas y Matemáticas",
+  department: "Departamento de Ciencias de la Computación",
+  logo: "logo.svg",
+)
+
+#let cover-info = (
   "Nombre del Estudiante": "Juanito Perez",
   "Email del Estudiante": "jperez@domain.net",
   "Teléfono del Estudiante": "+56 8 1234 5679",
@@ -32,13 +38,14 @@
 #set page(
   paper: "us-letter",
   margin: 2.5cm,
-  numbering: "i",
   header: [
     #grid(
       columns: (auto, 1fr),
       rows: (auto, 1em),
+      align: (left, right),
+
       chapter,
-      align(right, context counter(page).display()),
+      context counter(page).display(),
 
       grid.cell(colspan: 2, marginline)
     )
@@ -47,10 +54,11 @@
     #grid(
       columns: (1fr, 1fr),
       rows: (1em, auto),
+      align: (left, right),
       grid.cell(colspan: 2, marginline),
 
-      titulo,
-      align(right, codigo-curso)
+      meta.title,
+      align(right, meta.course)
     )
   ]
 )
@@ -70,20 +78,19 @@
       grid(
         columns: (auto, 1fr),
         rows: (1fr, auto),
+        align: (left + horizon, right + horizon),
 
-        align(left + horizon, 
-          box(height: 70%,
-            stack(
-              dir: ttb,
-              spacing: 1fr,
-              "Universidad de Chile",
-              "Facultad de Ciencias Físicas y Matemáticas",
-              "Departamento de Ciencias de la Computación"
-            )
+        box(height: 70%,
+          stack(
+            dir: ttb,
+            spacing: 1fr,
+            meta.institution,
+            meta.faculty,
+            meta.department
           )
         ),
 
-        align(right + horizon, image(height: 90%, "dcc.svg")),
+        image(height: 90%, meta.logo),
 
         grid.cell(colspan: 2, marginline)
       )
@@ -92,23 +99,24 @@
 
   #set align(horizon + center)
   #set par(spacing: 8mm, justify: false)
-  #text(size: 14mm, titulo)
+  #text(size: 14mm, meta.title)
 
-  #text(size: 10mm, codigo-curso)
+  #text(size: 10mm, meta.course)
+
+  #let parts = ()
+  #for (key, value) in cover-info {
+    parts.push(key + ":  ")
+    parts.push(align(left, value))
+  }
   #align(bottom + right,
-    stack(dir: ltr, {
-      let parts = ()
-      for (key, value) in meta {
-        parts.push(key + ":  ")
-        parts.push(align(left, value))
-      }
-      grid(columns: 2, gutter: 1.3mm, ..parts)
-    })
+    grid(columns: 2, gutter: 1.3mm, ..parts)
   )
 ]
 
+#set page(numbering: "i")
 #heading(numbering: none, outlined: false, bookmarked: true, "Resumen")
-// Aquí el resumen
+// Aquí va el resumen
+#lorem(50)
 
 #pagebreak()
 
@@ -127,7 +135,8 @@
 #counter(heading).update(0)
 
 = Desarrollo
-// Resto del informe
+// Aquí va el resto del informe
+#lorem(100) @example
 
 = Bibliografía
 #bibliography("biblio.yml", style: "ieee", title: none)
